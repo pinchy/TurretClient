@@ -43,10 +43,10 @@ void Turret::reset(void)
 	motors(ON);
 
 	while(!_isElevationCutout()) 
-		_elevate(1, true);
+		_elevate(-1, true);
 
 	while(!_isAzimuthCutout())
-		_rotate(1, true);
+		_rotate(-1, true);
 
 	pos = {0, 0};
 	_pos = {0, 0};
@@ -55,7 +55,7 @@ void Turret::reset(void)
 
 bool Turret::aim(void)
 {
-	return _rotate(pos.azimuth - _pos.azimuth) && _elevate(pos.elevation - _pos.elevation);
+	return _rotate(_pos.azimuth - pos.azimuth) && _elevate(_pos.elevation - pos.elevation);
 }
 
 
@@ -127,7 +127,7 @@ bool Turret::_elevate(int delta, bool overrideCutoutProtection)
 
 bool Turret::_checkElevationTarget(int delta)
 {
-	return (_pos.elevation + delta > EL_MAX || _pos.elevation + delta < EL_MIN);
+	return (_pos.elevation - delta > EL_MAX || _pos.elevation - delta < EL_MIN);
 }
 
 
@@ -180,7 +180,7 @@ bool Turret::_rotate(int delta, bool overrideCutoutProtection)
 
 bool Turret::_checkAzimuthTarget(int delta)
 {
-	return (_pos.elevation + delta > EL_MAX || _pos.elevation + delta < EL_MIN);
+	return (_pos.elevation - delta > EL_MAX || _pos.elevation - delta < EL_MIN);
 }
 
 
