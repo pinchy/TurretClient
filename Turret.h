@@ -26,10 +26,10 @@
 	#define STEPS_PER_DEGREE 53.3333333
 
 	/* Safe to Fire Zone (STFZ) cutouts */
-	#define AZ_MAX 0
-	#define AZ_MIN -14000
-	#define EL_MAX 0
-	#define EL_MIN -5000
+	#define AZ_MAX 14000
+	#define AZ_MIN 0
+	#define EL_MAX 5000
+	#define EL_MIN 0
 
 	#define OFF LOW
 	#define ON HIGH
