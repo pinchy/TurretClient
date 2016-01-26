@@ -58,6 +58,7 @@
 	private:
 		Position _pos;
 		bool _motorPowerState;
+		unsigned long _motorLastMove;
 		bool _elevate(int delta);
 		bool _elevate(int delta, bool override);
 		bool _rotate(int delta);
@@ -68,6 +69,7 @@
 		bool _checkAzimuthTarget(int delta);
 		bool _isAzimuthCutout(void);
 		void _setAzimuthDirection(int delta);
+		void _checkMotors(void);
 	};
 
 #endif

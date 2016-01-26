@@ -20,7 +20,7 @@ Turret::Turret()
 	pos = {0, 0};
 	_pos = {0, 0};
 
-	_motorPowerState = true;
+	_motorPowerState = false;
 
   	delay(500);
 }
@@ -50,6 +50,8 @@ void Turret::reset(void)
 
 	pos = {0, 0};
 	_pos = {0, 0};
+
+	_motorPowerState = true;
 }
 
 
@@ -105,6 +107,8 @@ bool Turret::_elevate(int delta)
 
 bool Turret::_elevate(int delta, bool overrideCutoutProtection)
 {
+	_checkMotors();
+
 	_setElevationDirection(delta);
 
 	if(!overrideCutoutProtection && _checkElevationTarget(delta))
@@ -161,6 +165,8 @@ bool Turret::_rotate(int delta)
 
 bool Turret::_rotate(int delta, bool overrideCutoutProtection)
 {
+	_checkMotors();
+
 	_setAzimuthDirection(delta);
 
 	if(!overrideCutoutProtection && _checkAzimuthTarget(delta))
@@ -207,12 +213,20 @@ void Turret::_setAzimuthDirection(int delta)
 	delay(1);
 }
 
+// If the motors have been off, then need to reset before we move.
+// This ensures the system is in a known position state and avoids
+// issues where the turret was moved manually whenthe motors were disengaged.
+// It is assumed that when the motors are active that they can hold the system
+// in place.
+void Turret::_checkMotors()
+{
+	if(!_motorPowerState) reset();
+}
 
 void Turret::motors(bool mode)
 {
 	digitalWrite(MOTOR_POWER_PIN, mode);
-	_motorPowerState = mode;
-	if(!mode) _motorLastMove = millis();
+	if(!mode) _motorPowerState = false;
 }
 
 
