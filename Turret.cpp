@@ -181,7 +181,7 @@ bool Turret::_rotate(int delta, bool overrideCutoutProtection)
 		digitalWrite(AZIMUTH_STEP_PIN,HIGH);
 		delayMicroseconds(AZIMUTH_MOTOR_DELAY); 
 
-		if(isAzimuthCutout()) return false;
+		if(_isAzimuthCutout()) return false;
 	}
 
 	_pos.azimuth += delta;
