@@ -1,0 +1,34 @@
+#######################################
+# Syntax Coloring Map For Turret
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+azimuth KEYWORD1
+elevation KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+goHome KEYWORD2
+setPosition KEYWORD2
+resetPosition KEYWORD2
+aimAndFire KEYWORD2
+fire KEYWORD2
+elevate KEYWORD2
+rotate KEYWORD2
+motors KEYWORD2
+toString KEYWORD2
+
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
