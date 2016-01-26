@@ -21,8 +21,8 @@
 	#define ELEVATION_MOTOR_DELAY 1000  // 1000 good
 
 	/* Azimuth and Elevation home positions */
-	#define AZIMUTH_HOME 0  // -1983
-	#define ELEVATION_HOME -2030 // -2030
+	#define AZIMUTH_HOME 0  
+	#define ELEVATION_HOME 2030 
 	#define STEPS_PER_DEGREE 53.3333333
 
 	/* Safe to Fire Zone (STFZ) cutouts */
@@ -39,7 +39,6 @@
 		int elevation;
 		int azimuth;
 	};
-
 
 	class Turret
 	{
