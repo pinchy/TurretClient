@@ -118,6 +118,8 @@ bool Turret::_elevate(int delta, bool overrideCutoutProtection)
 		delayMicroseconds(2);
 		digitalWrite(ELEVATION_STEP_PIN, HIGH);
 		delayMicroseconds(ELEVATION_MOTOR_DELAY); 
+
+		if(_isElevationCutout()) return false;
 	}
 
 	_pos.elevation += delta;
@@ -172,6 +174,8 @@ bool Turret::_rotate(int delta, bool overrideCutoutProtection)
 		delayMicroseconds(2);
 		digitalWrite(AZIMUTH_STEP_PIN,HIGH);
 		delayMicroseconds(AZIMUTH_MOTOR_DELAY); 
+
+		if(isAzimuthCutout()) return false;
 	}
 
 	_pos.azimuth += delta;
@@ -208,6 +212,7 @@ void Turret::motors(bool mode)
 {
 	digitalWrite(MOTOR_POWER_PIN, mode);
 	_motorPowerState = mode;
+	if(!mode) _motorLastMove = millis();
 }
 
 
