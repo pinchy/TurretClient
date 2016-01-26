@@ -55,7 +55,7 @@ void Turret::reset(void)
 
 bool Turret::aim(void)
 {
-	return _rotate(_pos.azimuth - pos.azimuth) && _elevate(_pos.elevation - pos.elevation);
+	return _rotate(pos.azimuth - _pos.azimuth) && _elevate(pos.elevation - _pos.elevation);
 }
 
 
@@ -127,7 +127,7 @@ bool Turret::_elevate(int delta, bool overrideCutoutProtection)
 
 bool Turret::_checkElevationTarget(int delta)
 {
-	return (_pos.elevation - delta > EL_MAX || _pos.elevation - delta < EL_MIN);
+	return (_pos.elevation + delta > EL_MAX || _pos.elevation + delta < EL_MIN);
 }
 
 
@@ -141,11 +141,11 @@ void Turret::_setElevationDirection(int delta)
 {
 	if(delta < 0)
 	{
-		digitalWrite(ELEVATION_DIR_PIN, LOW);
+		digitalWrite(ELEVATION_DIR_PIN, HIGH);
 	}
 	else
 	{
-		digitalWrite(ELEVATION_DIR_PIN, HIGH);
+		digitalWrite(ELEVATION_DIR_PIN, LOW);
 	}
 	delay(1);
 }
@@ -180,7 +180,7 @@ bool Turret::_rotate(int delta, bool overrideCutoutProtection)
 
 bool Turret::_checkAzimuthTarget(int delta)
 {
-	return (_pos.elevation - delta > EL_MAX || _pos.elevation - delta < EL_MIN);
+	return (_pos.elevation + delta > EL_MAX || _pos.elevation + delta < EL_MIN);
 }
 
 
@@ -194,11 +194,11 @@ void Turret::_setAzimuthDirection(int delta)
 {
 	if(delta < 0)
 	{
-		digitalWrite(AZIMUTH_DIR_PIN, LOW);
+		digitalWrite(AZIMUTH_DIR_PIN, HIGH);
 	}
 	else
 	{
-		digitalWrite(AZIMUTH_DIR_PIN, HIGH);
+		digitalWrite(AZIMUTH_DIR_PIN, LOW);
 	}
 	delay(1);
 }
