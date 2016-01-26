@@ -20,8 +20,8 @@ Turret turret;
 
 byte mac[] = { 0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x01 };
 IPAddress ip(10, 1, 1, 99);
-IPAddress server(10, 1, 1, 14);  // who we're connecting to.  TODO UPDATE
-// String server = "turret.bluechilli.com";
+//IPAddress server(10, 1, 1, 14);  // who we're connecting to.  TODO UPDATE
+char server[] = "turret.bluechilli.com";
 
 EthernetClient client;
 unsigned short invalidResponseCount = 0;
@@ -79,8 +79,8 @@ void connectToServer()
   if (client.connect(server, 80))
   {
     Serial.println("making HTTP request...");
-    client.println("GET /~Seb/TurretServer/ HTTP/1.0");
-    // client.println("HOST: turret.bluechilli.com");
+    client.println("GET /turret/check HTTP/1.0");
+    client.println("HOST: turret.bluechilli.com");
     client.println();
   }
 
@@ -154,6 +154,7 @@ bool parseResponse()
   {
     Serial.println("Fire");
     turret.aimAndFire(a.toInt(), e.toInt());
+    splash();
   }
   else
   {
@@ -169,4 +170,19 @@ bool parseResponse()
 
   resp = "";
   return true;
+}
+
+void splash(void)
+{
+    Serial.println("connecting to server...");
+    if (client.connect(server, 80))
+    {
+      Serial.println("making HTTP request to Splash...");
+      client.println("GET /turret/splash HTTP/1.0");
+      client.println("HOST: turret.bluechilli.com");
+      client.println();
+      client.stop();
+    }
+
+    lastAttemptTime = millis();
 }
