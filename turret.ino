@@ -1,13 +1,20 @@
 /*
-  Turret Web Control
-
+  Turret Controller
+  @author: Sebastien Eckersley-Maslin
+  @date: Jan 2016
+  
+  Turret controller script. Connects to the turret webserver and downloads 
+  any pending move/aim commeands.  If it finds one, it controls the turret
+  to move to the correct location and to execute the command.
+  
+  Requires the Turret library
+  
  */
 #include <SPI.h>
 #include <Ethernet.h>
 #include <Turret.h>
 
 #define NUM_RESPONSES_BEFORE_CUTOFF 10  // max 256
-
 
 Turret turret;
 
@@ -23,14 +30,11 @@ unsigned long lastAttemptTime = 0;            // last time you connected to the 
 
 String resp;
 
-
 void setup()
 {
   resp.reserve(256);
   Serial.begin(9600);
-  while (!Serial)  {
-    ;
-  }
+  while (!Serial)  { ; }
 
   // attempt a DHCP connection:
   Serial.println("Attempting to get an IP address using DHCP:");
