@@ -17,12 +17,10 @@ Turret::Turret()
 	digitalWrite(FIRE_PIN, LOW);
 	digitalWrite(MOTOR_POWER_PIN, HIGH);
 
-	pos = {0, 0};
-	_pos = {0, 0};
+	target = {0, 0};
+	_position = {0, 0};
 
 	_motorPowerState = false;
-
-  	delay(500);
 }
 
 
@@ -48,8 +46,8 @@ void Turret::reset(void)
 	while(!_isAzimuthCutout())
 		_rotate(-1, true);
 
-	pos = {0, 0};
-	_pos = {0, 0};
+	target = {0, 0};
+	_position = {0, 0};
 
 	_motorPowerState = true;
 }
@@ -57,7 +55,7 @@ void Turret::reset(void)
 
 bool Turret::aim(void)
 {
-	return _rotate(pos.azimuth - _pos.azimuth) && _elevate(pos.elevation - _pos.elevation);
+	return _rotate(target.azimuth - _position.azimuth) && _elevate(target.elevation - _position.elevation);
 }
 
 
@@ -70,11 +68,11 @@ bool Turret::aim(int a, int e)
 
 bool Turret::setTarget(int a, int e)
 {
-	if(_checkElevationTarget(e) && _checkAzimuthTarget(a))
+	if(_isTargetElevationValid(e) && _isTargetAzimuthValid(a))
 	{
-		pos.elevation = e;
-		pos.azimuth = a;
-		return true;
+		target.elevation = e;
+		target.azimuth = a;
+		return true;	
 	}
 	else
 	{
@@ -85,9 +83,11 @@ bool Turret::setTarget(int a, int e)
 
 void Turret::aimAndFire(int a, int e)
 {
-	aim(a, e);
-	delay(500);
-	fire();
+	if(aim(a, e))
+	{
+		delay(500);
+		fire();
+	}
 }
 
 
@@ -108,10 +108,9 @@ bool Turret::_elevate(int delta)
 bool Turret::_elevate(int delta, bool overrideCutoutProtection)
 {
 	_checkMotors();
-
 	_setElevationDirection(delta);
 
-	if(!overrideCutoutProtection && _checkElevationTarget(delta))
+	if(!overrideCutoutProtection && !_isTargetElevationValid(delta))
 	{
 		return false;
 	}
@@ -123,17 +122,17 @@ bool Turret::_elevate(int delta, bool overrideCutoutProtection)
 		digitalWrite(ELEVATION_STEP_PIN, HIGH);
 		delayMicroseconds(ELEVATION_MOTOR_DELAY); 
 
+		_position.elevation += (delta < 0) ? -1 : 1;
 		if(_isElevationCutout()) return false;
 	}
 
-	_pos.elevation += delta;
 	return true;
 }
 
 
-bool Turret::_checkElevationTarget(int delta)
+bool Turret::_isTargetElevationValid(int delta)
 {
-	return (_pos.elevation + delta > EL_MAX || _pos.elevation + delta < EL_MIN);
+	return (_position.elevation + delta < EL_MAX && _position.elevation + delta > EL_MIN);
 }
 
 
@@ -166,10 +165,9 @@ bool Turret::_rotate(int delta)
 bool Turret::_rotate(int delta, bool overrideCutoutProtection)
 {
 	_checkMotors();
-
 	_setAzimuthDirection(delta);
 
-	if(!overrideCutoutProtection && _checkAzimuthTarget(delta))
+	if(!overrideCutoutProtection && _isTargetAzimuthValid(delta))
 	{
 		return false;
 	}
@@ -181,16 +179,16 @@ bool Turret::_rotate(int delta, bool overrideCutoutProtection)
 		digitalWrite(AZIMUTH_STEP_PIN,HIGH);
 		delayMicroseconds(AZIMUTH_MOTOR_DELAY); 
 
+		_position.azimuth += (delta < 0) ? -1 : 1;
 		if(_isAzimuthCutout()) return false;
 	}
 
-	_pos.azimuth += delta;
 	return true;
 }
 
-bool Turret::_checkAzimuthTarget(int delta)
+bool Turret::_isTargetAzimuthValid(int delta)
 {
-	return (_pos.elevation + delta > EL_MAX || _pos.elevation + delta < EL_MIN);
+	return (_position.azimuth + delta < AZ_MAX || _position.azimuth + delta > AZ_MIN);
 }
 
 
@@ -213,15 +211,17 @@ void Turret::_setAzimuthDirection(int delta)
 	delay(1);
 }
 
+
 // If the motors have been off, then need to reset before we move.
 // This ensures the system is in a known position state and avoids
 // issues where the turret was moved manually whenthe motors were disengaged.
 // It is assumed that when the motors are active that they can hold the system
 // in place.
-void Turret::_checkMotors()
+void Turret::_checkMotors(void)
 {
 	if(!_motorPowerState) reset();
 }
+
 
 void Turret::motors(bool mode)
 {
@@ -233,9 +233,9 @@ void Turret::motors(bool mode)
 String Turret::toString(void)
 {
 	String str = "Azimuth: ";
-	str.concat(_pos.azimuth);
+	str.concat(_position.azimuth);
 	str.concat(" Elevation: ");
-	str.concat(_pos.elevation);
+	str.concat(_position.elevation);
 	str.concat(" Weapon: ");
 	str.concat(_motorPowerState);
 	return str;

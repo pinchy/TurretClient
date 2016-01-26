@@ -45,7 +45,7 @@
 	public:
 		Turret();
 		~Turret();
-		Position pos;
+		Position target;
 		void goHome(void);
 		void reset(void);
 		bool aim(void);
@@ -56,17 +56,17 @@
 		void motors(bool mode);
 		String toString(void);
 	private:
-		Position _pos;
+		Position _position;
 		bool _motorPowerState;
 		unsigned long _motorLastMove;
 		bool _elevate(int delta);
 		bool _elevate(int delta, bool override);
 		bool _rotate(int delta);
 		bool _rotate(int delta, bool override);
-		bool _checkElevationTarget(int delta);
+		bool _isTargetElevationValid(int delta);
 		bool _isElevationCutout(void);
 		void _setElevationDirection(int delta);
-		bool _checkAzimuthTarget(int delta);
+		bool _isTargetAzimuthValid(int delta);
 		bool _isAzimuthCutout(void);
 		void _setAzimuthDirection(int delta);
 		void _checkMotors(void);
